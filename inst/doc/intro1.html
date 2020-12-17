@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<meta name="author" content="Zi’ang Xu" />
+
+<meta name="date" content="2020-12-17" />
+
+<title>Introduction to Scale-free network functions</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Introduction to Scale-free network functions</h1>
+<h4 class="author">Zi’ang Xu</h4>
+<h4 class="date">2020-12-17</h4>
+
+
+
+<div id="overview" class="section level2">
+<h2>Overview</h2>
+<p>无标度网络是指一个度分布满足幂律分布的网络, 在这类网络中, 我们给出以下两个模型的生成方法.</p>
+</div>
+<div id="ba-function" class="section level2">
+<h2>BA function</h2>
+<p>BA模型的生成方法如下:</p>
+<p>(1)网络的增长，从一个具有<span class="math inline">\(m_0\)</span>个节点的完全图网络开始，在每个时间间隔引入一个新的节点，并且连接到网络中<span class="math inline">\(m\)</span>个节点上，这里<span class="math inline">\(m≤m_0\)</span></p>
+<p>(2)择优连接:一个新节点与一个已经存在的节点<span class="math inline">\(i\)</span>连接的概率<span class="math inline">\(p(v_i)=\frac{d_i}{\sum_j d_j}\)</span>其中<span class="math inline">\(d_i\)</span>为节点<span class="math inline">\(i\)</span>的度.</p>
+<p>(3)根据以上规则,在经过<span class="math inline">\(t\)</span>个时间间隔后,可以得到一个具有<span class="math inline">\(N=t+m_0\)</span>个节点以及<span class="math inline">\(mt+m_0(m_0-1)/2\)</span>条边.可以证明当<span class="math inline">\(t\)</span>足够大时,按此规律增长的网络的度分布为幂律分布,即为无标度网络.</p>
+<p>我们可以用以下函数来生成一个BA模型:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a>BA=<span class="cf">function</span>(m0,m,N){</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true"></a>  d=<span class="kw">numeric</span>(N)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true"></a>  p=<span class="kw">numeric</span>(N)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true"></a>  d[<span class="dv">1</span><span class="op">:</span>m0]=m0<span class="dv">-1</span>  <span class="co">#generate a complete graph</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true"></a>  <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>(N<span class="op">-</span>m0)){</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true"></a>    p=d<span class="op">/</span><span class="kw">sum</span>(d)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true"></a>    n=<span class="kw">sample</span>(<span class="dv">1</span><span class="op">:</span>N,<span class="dt">size=</span>m,<span class="dt">replace=</span><span class="ot">FALSE</span>,<span class="dt">prob=</span>p) <span class="co">#Preferred connection</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true"></a>    d[n]=d[n]<span class="op">+</span><span class="dv">1</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true"></a>    d[m0<span class="op">+</span>i]=m</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true"></a>  }</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true"></a>  <span class="kw">return</span>(d)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true"></a>}</span></code></pre></div>
+<p>运用该函数我们进行一个网络的模拟, 并作出累积度分布函数与度之间的对数变化曲线:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a><span class="kw">set.seed</span>(<span class="dv">12345</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a>N=<span class="dv">10000</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true"></a>m0=<span class="dv">10</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true"></a>m=<span class="dv">2</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true"></a>d=<span class="kw">BA</span>(m0,m,N)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true"></a>Fk=<span class="kw">numeric</span>(<span class="kw">max</span>(d))</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">max</span>(d)){</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true"></a>  Fk[i]=<span class="kw">sum</span>(<span class="kw">as.integer</span>(d<span class="op">&gt;=</span>i))</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true"></a>}</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true"></a>x=<span class="dv">1</span><span class="op">:</span><span class="kw">max</span>(d)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true"></a><span class="kw">plot</span>(<span class="kw">log</span>(x),<span class="kw">log</span>(Fk[<span class="dv">1</span><span class="op">:</span><span class="kw">max</span>(d)]))</span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p>取出满足幂律分布的那一段作分析, 可以认为该模型为无标度网络:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a>x=<span class="dv">2</span><span class="op">:</span><span class="dv">54</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true"></a><span class="kw">plot</span>(<span class="kw">log</span>(x),<span class="kw">log</span>(Fk[<span class="dv">2</span><span class="op">:</span><span class="dv">54</span>]))</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true"></a>fit=<span class="kw">lm</span>(<span class="kw">log</span>(Fk[<span class="dv">2</span><span class="op">:</span><span class="dv">54</span>])<span class="op">~</span><span class="kw">log</span>(x))</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true"></a><span class="kw">print</span>(fit)</span></code></pre></div>
+<pre><code>## 
+## Call:
+## lm(formula = log(Fk[2:54]) ~ log(x))
+## 
+## Coefficients:
+## (Intercept)       log(x)  
+##      10.674       -1.911</code></pre>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true"></a>coef=<span class="kw">round</span>(fit<span class="op">$</span>coef,<span class="dv">3</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true"></a><span class="kw">abline</span>(<span class="dt">a=</span>coef[<span class="dv">1</span>],<span class="dt">b=</span>coef[<span class="dv">2</span>],<span class="dt">col=</span><span class="st">&quot;red&quot;</span>,<span class="dt">lwd=</span><span class="dv">2</span>)</span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+</div>
+<div id="hv-function" class="section level2">
+<h2>HV function</h2>
+<p>在隐变量网络模型中, 我们仅考虑无向图, 对于每个节点我们可以为其附加一个非负实变量<span class="math inline">\(X\)</span>(隐变量), 而这个变量<span class="math inline">\(X\)</span>的取值是由一个概率密度函数<span class="math inline">\(\rho(x)\)</span>给出的. 我们也可以将这个隐变量称为节点的适应度. 而两个节点(这两个节点的隐变量取值分别为<span class="math inline">\(x\)</span>和<span class="math inline">\(y\)</span>)之间是否可以成功连接则是由一个概率函数<span class="math inline">\(f(x,y)\)</span>控制. 例如,当<span class="math inline">\(f(x,y)=p\)</span>时表示这两个节点之间连接成边的概率为<span class="math inline">\(p\)</span>. 根据模型的生成规律, 我们可以给出以下函数进行模拟, 并且参数如下: <span class="math display">\[\rho(x)=e^{-x}, f_{\beta}(x,y)=\frac{1}{1+e^{-\beta(x+y-\Delta)}}\]</span></p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true"></a>HV=<span class="cf">function</span>(N,beta){</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true"></a>  delta=<span class="kw">log</span>(N)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true"></a>  x=<span class="kw">rexp</span>(N,<span class="dv">1</span>)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true"></a>  f=<span class="cf">function</span>(m,n){</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true"></a>    p=<span class="dv">1</span><span class="op">/</span>(<span class="dv">1</span><span class="op">+</span><span class="kw">exp</span>(<span class="op">-</span>beta<span class="op">*</span>(m<span class="op">+</span>n<span class="op">-</span>delta))) <span class="co">#Connection function</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true"></a>    <span class="kw">return</span>(p)</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true"></a>  }</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true"></a>  d=<span class="kw">numeric</span>(N)</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true"></a>  <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>(N<span class="dv">-1</span>)){</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true"></a>    <span class="cf">for</span>(j <span class="cf">in</span> (i<span class="op">+</span><span class="dv">1</span>)<span class="op">:</span>N){</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true"></a>      <span class="cf">if</span>(<span class="kw">runif</span>(<span class="dv">1</span>)<span class="op">&lt;</span><span class="kw">f</span>(x[i],x[j])){</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true"></a>        d[i]=d[i]<span class="op">+</span><span class="dv">1</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true"></a>        d[j]=d[j]<span class="op">+</span><span class="dv">1</span>}</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true"></a>      <span class="cf">else</span>{d[i]=d[i]</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true"></a>      d[j]=d[j]}</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true"></a>    }</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true"></a>  }</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true"></a>  <span class="kw">return</span>(d)</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true"></a>}</span></code></pre></div>
+<p>运用该函数我们进行一个网络的模拟, 并作出累积度分布函数与度之间的对数变化曲线:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true"></a><span class="kw">set.seed</span>(<span class="dv">12345</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true"></a>N=<span class="dv">10000</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true"></a>beta=<span class="fl">0.7</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true"></a>d=<span class="kw">HV</span>(N,beta)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true"></a>Fk=<span class="kw">numeric</span>(<span class="kw">max</span>(d))</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">max</span>(d)){</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true"></a>  Fk[i]=<span class="kw">sum</span>(<span class="kw">as.integer</span>(d<span class="op">&gt;=</span>i))</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true"></a>}</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true"></a>x=<span class="dv">1</span><span class="op">:</span><span class="kw">max</span>(d)</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true"></a><span class="kw">plot</span>(<span class="kw">log</span>(x),<span class="kw">log</span>(Fk[<span class="dv">1</span><span class="op">:</span><span class="kw">max</span>(d)]))</span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p>取出满足幂律分布的那一段作分析, 可以认为该模型为无标度网络:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true"></a>x=<span class="dv">55</span><span class="op">:</span><span class="dv">1050</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true"></a><span class="kw">plot</span>(<span class="kw">log</span>(x),<span class="kw">log</span>(Fk[<span class="dv">55</span><span class="op">:</span><span class="dv">1050</span>]))</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true"></a>fit=<span class="kw">lm</span>(<span class="kw">log</span>(Fk[<span class="dv">55</span><span class="op">:</span><span class="dv">1050</span>])<span class="op">~</span><span class="kw">log</span>(x))</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true"></a><span class="kw">print</span>(fit)</span></code></pre></div>
+<pre><code>## 
+## Call:
+## lm(formula = log(Fk[55:1050]) ~ log(x))
+## 
+## Coefficients:
+## (Intercept)       log(x)  
+##      15.606       -1.609</code></pre>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true"></a>coef=<span class="kw">round</span>(fit<span class="op">$</span>coef,<span class="dv">3</span>)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true"></a><span class="kw">abline</span>(<span class="dt">a=</span>coef[<span class="dv">1</span>],<span class="dt">b=</span>coef[<span class="dv">2</span>],<span class="dt">col=</span><span class="st">&quot;red&quot;</span>,<span class="dt">lwd=</span><span class="dv">2</span>)</span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

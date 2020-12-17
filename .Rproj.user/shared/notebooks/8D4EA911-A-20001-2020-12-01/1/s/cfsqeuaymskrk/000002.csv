@@ -1,0 +1,6 @@
+"0","rwc1=rwMC(sigma[1],x0,N)"
+"0","rwc2=rwMC(sigma[2],x0,N)"
+"0","rwc3=rwMC(sigma[3],x0,N)"
+"0","rwc4=rwMC(sigma[4],x0,N)"
+"0","par(mfrow=c(2,2))"
+"0","plot(rwc1[,1],type=""l"",lwd=2,xlab=""sigma=0.05"",ylab=""X"")"

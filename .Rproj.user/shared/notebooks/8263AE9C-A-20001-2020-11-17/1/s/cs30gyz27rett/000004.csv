@@ -1,0 +1,1 @@
+"0","plot(rw2$x,type=""l"",lwd=2,xlab=""sigma=0.5"",ylab=""X"")"

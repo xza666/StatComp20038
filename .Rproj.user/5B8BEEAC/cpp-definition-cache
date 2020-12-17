@@ -1,0 +1,17 @@
+[
+    {
+        "file": "C:/Users/xza/Desktop/StatComp20038/src/StatCompC.cpp",
+        "file_last_write": 1607946766.0,
+        "definitions": [
+            {
+                "usr": "c:@F@rwMC#d#d#I#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "rwMC(double, double, int)",
+                "file": "C:/Users/xza/Desktop/StatComp20038/src/StatCompC.cpp",
+                "line": 17,
+                "column": 15
+            }
+        ]
+    }
+]

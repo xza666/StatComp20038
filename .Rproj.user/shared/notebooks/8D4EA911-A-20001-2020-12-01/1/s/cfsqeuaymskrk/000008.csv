@@ -1,0 +1,1 @@
+"0","plot(rwc4[,1],type=""l"",lwd=2,xlab=""sigma=16"",ylab=""X"")"
