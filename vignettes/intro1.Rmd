@@ -1,0 +1,115 @@
+---
+title: "Introduction to Scale-free network functions"
+author: "Zi'ang Xu"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Introduction to Scale-free network functions}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+## Overview
+
+无标度网络是指一个度分布满足幂律分布的网络, 在这类网络中, 我们给出以下两个模型的生成方法.
+
+## BA function
+
+BA模型的生成方法如下:
+
+(1)网络的增长，从一个具有$m_0$个节点的完全图网络开始，在每个时间间隔引入一个新的节点，并且连接到网络中$m$个节点上，这里$m≤m_0$
+
+(2)择优连接:一个新节点与一个已经存在的节点$i$连接的概率$p(v_i)=\frac{d_i}{\sum_j d_j}$其中$d_i$为节点$i$的度.
+
+(3)根据以上规则,在经过$t$个时间间隔后,可以得到一个具有$N=t+m_0$个节点以及$mt+m_0(m_0-1)/2$条边.可以证明当$t$足够大时,按此规律增长的网络的度分布为幂律分布,即为无标度网络.
+
+我们可以用以下函数来生成一个BA模型:
+```{r}
+BA=function(m0,m,N){
+  d=numeric(N)
+  p=numeric(N)
+  d[1:m0]=m0-1  #generate a complete graph
+  for(i in 1:(N-m0)){
+    p=d/sum(d)
+    n=sample(1:N,size=m,replace=FALSE,prob=p) #Preferred connection
+    d[n]=d[n]+1
+    d[m0+i]=m
+  }
+  return(d)
+}
+```
+
+运用该函数我们进行一个网络的模拟, 并作出累积度分布函数与度之间的对数变化曲线:
+```{r}
+set.seed(12345)
+N=10000
+m0=10
+m=2
+d=BA(m0,m,N)
+Fk=numeric(max(d))
+for(i in 1:max(d)){
+  Fk[i]=sum(as.integer(d>=i))
+}
+x=1:max(d)
+plot(log(x),log(Fk[1:max(d)]))
+```
+
+取出满足幂律分布的那一段作分析, 可以认为该模型为无标度网络:
+```{r}
+x=2:54
+plot(log(x),log(Fk[2:54]))
+fit=lm(log(Fk[2:54])~log(x))
+print(fit)
+coef=round(fit$coef,3)
+abline(a=coef[1],b=coef[2],col="red",lwd=2)
+```
+
+## HV function
+
+在隐变量网络模型中, 我们仅考虑无向图, 对于每个节点我们可以为其附加一个非负实变量$X$(隐变量), 而这个变量$X$的取值是由一个概率密度函数$\rho(x)$给出的. 我们也可以将这个隐变量称为节点的适应度. 而两个节点(这两个节点的隐变量取值分别为$x$和$y$)之间是否可以成功连接则是由一个概率函数$f(x,y)$控制. 例如,当$f(x,y)=p$时表示这两个节点之间连接成边的概率为$p$. 根据模型的生成规律, 我们可以给出以下函数进行模拟, 并且参数如下:
+$$\rho(x)=e^{-x}, f_{\beta}(x,y)=\frac{1}{1+e^{-\beta(x+y-\Delta)}}$$
+```{r}
+HV=function(N,beta){
+  delta=log(N)
+  x=rexp(N,1)
+  f=function(m,n){
+    p=1/(1+exp(-beta*(m+n-delta))) #Connection function
+    return(p)
+  }
+  d=numeric(N)
+  for(i in 1:(N-1)){
+    for(j in (i+1):N){
+      if(runif(1)<f(x[i],x[j])){
+        d[i]=d[i]+1
+        d[j]=d[j]+1}
+      else{d[i]=d[i]
+      d[j]=d[j]}
+    }
+  }
+  return(d)
+}
+```
+
+运用该函数我们进行一个网络的模拟, 并作出累积度分布函数与度之间的对数变化曲线:
+```{r}
+set.seed(12345)
+N=10000
+beta=0.7
+d=HV(N,beta)
+Fk=numeric(max(d))
+for(i in 1:max(d)){
+  Fk[i]=sum(as.integer(d>=i))
+}
+x=1:max(d)
+plot(log(x),log(Fk[1:max(d)]))
+```
+
+取出满足幂律分布的那一段作分析, 可以认为该模型为无标度网络:
+```{r}
+x=55:1050
+plot(log(x),log(Fk[55:1050]))
+fit=lm(log(Fk[55:1050])~log(x))
+print(fit)
+coef=round(fit$coef,3)
+abline(a=coef[1],b=coef[2],col="red",lwd=2)
+```

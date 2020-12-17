@@ -1,0 +1,17 @@
+Package: StatComp20038
+Type: Package
+Title: Functions for 'Statistical Computing' course 
+Version: 1.0
+Date: 2020-12-14
+Author: Zi'ang Xu
+Maintainer: Zi'ang Xu <3127224710@qq.com>
+Description: Several R and Rcpp function are included in this package for illustration.
+License: GPL (>= 2)
+Imports: Rcpp (>= 1.0.5), microbenchmark, knitr, rmarkdown, MASS, bootstrap, boot, DAAG, RANN, energy, Ball
+LinkingTo: Rcpp
+RoxygenNote: 7.1.1
+Encoding: UTF-8
+Suggest: knitr, rmarkdown
+VignetteBuilder: knitr
+URL: http://github.com/xza666/StatComp20038
+BugReports: http://github.com/xza666/StatComp20038/issues
